@@ -91,11 +91,10 @@ node[:deploy].each do |application, deploy|
 			end
 		end
 
-		execute "git push dokku@localhost:#{deploy[:domains].first} #{deploy[:scm][:revision]}"  do
+		execute "git push #{deploy[:dokku_user]}@localhost:#{deploy[:domains].first} #{deploy[:scm][:revision]}" do
 			user deploy[:user]
 			group deploy[:group]
 			cwd deploy[:current_path]
-			command "git push dokku@localhost:#{deploy[:domains].first} #{deploy[:scm][:revision]}"
 		end
 	end
 end
