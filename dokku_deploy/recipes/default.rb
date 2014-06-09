@@ -44,17 +44,17 @@ node[:deploy].each do |application, deploy|
 				user 'dokku'
 				group 'dokku'
 				code <<-EOH
-					mkdir #{node[:dokku][:root]}/#{deploy[:domains].first}
-					mkdir #{node[:dokku][:root]}/#{deploy[:domains].first}/tls
+					mkdir #{node[:dokku][:root]}/#{application}
+					mkdir #{node[:dokku][:root]}/#{application}/tls
 				EOH
 				not_if do
 					user 'dokku'
 					group 'dokku'
-					::File.directory?("#{node[:dokku][:root]}/#{deploy[:domains].first}/tls")
+					::File.directory?("#{node[:dokku][:root]}/#{application}/tls")
 				end
 			end
 
-			template "#{node[:dokku][:root]}/#{deploy[:domains].first}/tls/server.crt" do
+			template "#{node[:dokku][:root]}/#{application}/tls/server.crt" do
 				mode '0664'
 				owner 'dokku'
 				group 'dokku'
@@ -66,7 +66,7 @@ node[:deploy].each do |application, deploy|
 				action :create
 			end
 
-			template "#{node[:dokku][:root]}/#{deploy[:domains].first}/tls/server.key" do
+			template "#{node[:dokku][:root]}/#{application}/tls/server.key" do
 				mode '0664'
 				owner 'dokku'
 				group 'dokku'
@@ -78,7 +78,7 @@ node[:deploy].each do |application, deploy|
 				action :create
 			end
 
-			template "#{node[:dokku][:root]}/#{deploy[:domains].first}/tls/server.ca" do
+			template "#{node[:dokku][:root]}/#{application}/tls/server.ca" do
 				mode '0664'
 				owner 'dokku'
 				group 'dokku'
@@ -91,11 +91,11 @@ node[:deploy].each do |application, deploy|
 			end
 		end
 
-		execute "git push dokku@localhost:#{deploy[:domains].first} #{deploy[:scm][:revision]}"  do
+		execute "git push dokku@localhost:#{application} #{deploy[:scm][:revision]}"  do
 			user deploy[:user]
 			group deploy[:group]
 			cwd deploy[:current_path]
-			command "git push dokku@localhost:#{deploy[:domains].first} #{deploy[:scm][:revision]}"
+			command "git push dokku@localhost:#{application} #{deploy[:scm][:revision]}"
 		end
 	end
 end
